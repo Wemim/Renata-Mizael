@@ -15,11 +15,6 @@ html, body {
   font-family: Arial, sans-serif;
 }
 
-body {
-  touch-action: manipulation;
-}
-
-/* container */
 .site {
   width: 1080px;
   margin: 0 auto;
@@ -31,7 +26,13 @@ body {
   }
 }
 
-/* status */
+/* ===== TOPO SVG ===== */
+svg {
+  display: block;
+  width: 100%;
+}
+
+/* ===== STATUS ===== */
 .status {
   text-align: center;
   font-size: 22px;
@@ -40,14 +41,27 @@ body {
   padding: 12px;
 }
 
-/* galeria com rolagem real */
-.gallery-scroll {
-  max-height: 70vh;
+/* ===== SEÇÃO GALERIA COM IMAGEM ===== */
+.galeria-bg {
+  width: 100%;
+  height: 1500px;
+  background: url("galeria.jpg") center top no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+/* área rolável sobre a imagem */
+.galeria-conteudo {
+  position: absolute;
+  top: 160px;      /* ajuste fino conforme sua arte */
+  left: 0;
+  right: 0;
+  bottom: 120px;   /* ajuste fino conforme sua arte */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* grid da galeria */
+/* grid */
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -64,7 +78,7 @@ body {
   cursor: pointer;
 }
 
-/* modal */
+/* ===== MODAL ===== */
 .modal {
   position: fixed;
   inset: 0;
@@ -90,10 +104,9 @@ body {
 
 <div class="site">
 
-<!-- SVG APENAS VISUAL -->
-<svg viewBox="0 0 1080 3000" width="100%" preserveAspectRatio="xMidYMin meet">
+<!-- ===== TOPO EM SVG ===== -->
+<svg viewBox="0 0 1080 1500" preserveAspectRatio="xMidYMin meet">
 
-  <!-- imagem topo -->
   <image href="topo.jpg" x="0" y="0" width="1080" height="1500"/>
 
   <!-- botão enviar -->
@@ -119,21 +132,22 @@ body {
     </body>
   </foreignObject>
 
-  <!-- imagem fundo galeria -->
-  <image href="galeria.jpg" x="0" y="1500" width="1080" height="1500"/>
-
 </svg>
 
-<!-- GALERIA FORA DO SVG (FUNCIONA NO CELULAR) -->
-<div class="status" id="status">📷 Fotos do casamento</div>
+<!-- ===== GALERIA DENTRO DA IMAGEM ===== -->
+<div class="galeria-bg">
 
-<div class="gallery-scroll">
-  <div class="gallery" id="gallery"></div>
+  <div class="status" id="status">📷 Fotos do casamento</div>
+
+  <div class="galeria-conteudo">
+    <div class="gallery" id="gallery"></div>
+  </div>
+
 </div>
 
 </div>
 
-<!-- modal -->
+<!-- ===== MODAL ===== -->
 <div class="modal" id="modal" onclick="this.style.display='none'">
   <img id="modalImg">
 </div>
@@ -150,12 +164,11 @@ function startMusic() {
   document.getElementById("musica").play().catch(()=>{});
 }
 
-/* envio */
+/* upload */
 filesInput.addEventListener("change", async () => {
   startMusic();
 
   const files = [...filesInput.files];
-
   if (files.length === 0) return;
 
   if (files.length > 10) {
@@ -192,7 +205,7 @@ function enviarArquivo(file) {
   });
 }
 
-/* carregar galeria */
+/* galeria */
 function carregarGaleria() {
   statusTxt.innerText = "📸 Carregando galeria...";
 
