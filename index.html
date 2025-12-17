@@ -19,7 +19,7 @@ body {
   touch-action: manipulation;
 }
 
-/* container no tamanho da imagem */
+/* container */
 .site {
   width: 1080px;
   margin: 0 auto;
@@ -40,14 +40,14 @@ body {
   padding: 12px;
 }
 
-/* wrapper com rolagem */
+/* galeria com rolagem real */
 .gallery-scroll {
-  height: 1100px; /* controla quanto pode rolar */
+  max-height: 70vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* galeria */
+/* grid da galeria */
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -90,6 +90,7 @@ body {
 
 <div class="site">
 
+<!-- SVG APENAS VISUAL -->
 <svg viewBox="0 0 1080 3000" width="100%" preserveAspectRatio="xMidYMin meet">
 
   <!-- imagem topo -->
@@ -118,23 +119,17 @@ body {
     </body>
   </foreignObject>
 
-  <!-- imagem galeria -->
+  <!-- imagem fundo galeria -->
   <image href="galeria.jpg" x="0" y="1500" width="1080" height="1500"/>
 
-  <!-- status + galeria -->
-  <foreignObject x="0" y="1550" width="1080" height="1400">
-    <body xmlns="http://www.w3.org/1999/xhtml" style="margin:0; overflow:hidden;">
-
-      <div class="status" id="status">📷 Veja as fotos abaixo</div>
-
-      <div class="gallery-scroll">
-        <div class="gallery" id="gallery"></div>
-      </div>
-
-    </body>
-  </foreignObject>
-
 </svg>
+
+<!-- GALERIA FORA DO SVG (FUNCIONA NO CELULAR) -->
+<div class="status" id="status">📷 Fotos do casamento</div>
+
+<div class="gallery-scroll">
+  <div class="gallery" id="gallery"></div>
+</div>
 
 </div>
 
@@ -155,7 +150,7 @@ function startMusic() {
   document.getElementById("musica").play().catch(()=>{});
 }
 
-/* seleção + envio */
+/* envio */
 filesInput.addEventListener("change", async () => {
   startMusic();
 
@@ -180,7 +175,6 @@ filesInput.addEventListener("change", async () => {
   carregarGaleria();
 });
 
-/* envio */
 function enviarArquivo(file) {
   return new Promise(resolve => {
     const reader = new FileReader();
@@ -198,7 +192,7 @@ function enviarArquivo(file) {
   });
 }
 
-/* galeria */
+/* carregar galeria */
 function carregarGaleria() {
   statusTxt.innerText = "📸 Carregando galeria...";
 
