@@ -4,87 +4,34 @@
 <meta charset="UTF-8">
 <title>Renata & Mizael 💍</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <style>
-* {
+html, body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  touch-action: pan-y;
-  font-family: Arial, sans-serif;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
+  background: #000;
   overflow-x: hidden;
 }
 
-/* ===== TELA 1 ===== */
-.topo {
-  width: 100vw;
-  height: 100vh;
-  background: url("./topo.jpg") center top / contain no-repeat;
-  position: relative;
-}
-
-/* botão */
-.enviar-area {
-  position: absolute;
-  bottom: 40px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.btn {
-  padding: 14px 28px;
-  border-radius: 40px;
-  border: 2px solid #fff;
-  background: rgba(255,255,255,0.95);
-  color: #5f84b8;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-input[type="file"] {
-  display: none;
-}
-
-/* ===== TELA 2 ===== */
-.galeria-fundo {
-  width: 100vw;
-  height: 100vh;
-  background: url("./galeria.jpg") center top / contain no-repeat;
-  position: relative;
-  overflow: hidden;
-}
-
-/* área rolável */
-.galeria-scroll {
-  position: absolute;
-  inset: 0;
-  padding: 80px 24px;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-.galeria-scroll::-webkit-scrollbar {
-  display: none;
+/* trava zoom */
+body {
+  touch-action: manipulation;
 }
 
 /* galeria */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 20px;
 }
 
 .gallery img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1/1;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 20px;
   cursor: pointer;
 }
 
@@ -96,7 +43,7 @@ input[type="file"] {
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .modal img {
@@ -109,25 +56,53 @@ input[type="file"] {
 <body>
 
 <audio id="musica" loop>
-  <source src="./musica.mp3" type="audio/mpeg">
+  <source src="musica.mp3" type="audio/mpeg">
 </audio>
 
-<!-- TELA 1 -->
-<section class="topo">
-  <div class="enviar-area">
-    <label class="btn" onclick="startMusic()">
-      Enviar fotos (máx. 10)
-      <input type="file" id="files" multiple accept="image/*">
-    </label>
-  </div>
-</section>
+<!-- SVG FIXO -->
+<svg
+  viewBox="0 0 1080 3000"
+  width="100%"
+  preserveAspectRatio="xMidYMin meet"
+>
 
-<!-- TELA 2 -->
-<section class="galeria-fundo">
-  <div class="galeria-scroll">
-    <div class="gallery" id="gallery"></div>
-  </div>
-</section>
+  <!-- IMAGEM 1 -->
+  <image href="topo.jpg" x="0" y="0" width="1080" height="1500"/>
+
+  <!-- BOTÃO ENVIAR -->
+  <foreignObject x="240" y="1280" width="600" height="140">
+    <body xmlns="http://www.w3.org/1999/xhtml">
+      <label style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:100%;
+        height:100%;
+        border-radius:70px;
+        border:4px solid #5f84b8;
+        background:#fff;
+        font-size:34px;
+        font-weight:bold;
+        color:#5f84b8;
+        cursor:pointer;
+      " onclick="startMusic()">
+        Enviar fotos (máx. 10)
+        <input id="files" type="file" multiple accept="image/*" style="display:none">
+      </label>
+    </body>
+  </foreignObject>
+
+  <!-- IMAGEM 2 -->
+  <image href="galeria.jpg" x="0" y="1500" width="1080" height="1500"/>
+
+  <!-- GALERIA ROLÁVEL -->
+  <foreignObject x="0" y="1600" width="1080" height="1300">
+    <body xmlns="http://www.w3.org/1999/xhtml" style="margin:0; overflow-y:auto;">
+      <div class="gallery" id="gallery"></div>
+    </body>
+  </foreignObject>
+
+</svg>
 
 <!-- MODAL -->
 <div class="modal" id="modal" onclick="this.style.display='none'">
@@ -141,17 +116,18 @@ const FOLDER_ID = "1Eu6-lW8Pq6eKjLNvwXz_xiOhCpQ0vCFA";
 
 const filesInput = document.getElementById("files");
 
+/* música */
 function startMusic() {
   document.getElementById("musica").play().catch(()=>{});
 }
 
-/* envio */
+/* envio automático */
 filesInput.addEventListener("change", async () => {
   startMusic();
-  const files = [...filesInput.files];
 
+  const files = [...filesInput.files];
   if (files.length > 10) {
-    alert("Máximo de 10 fotos.");
+    alert("Máximo de 10 fotos por envio.");
     filesInput.value = "";
     return;
   }
@@ -164,6 +140,7 @@ filesInput.addEventListener("change", async () => {
   carregarGaleria();
 });
 
+/* envio FUNCIONAL (igual ao seu) */
 function enviarArquivo(file) {
   return new Promise(resolve => {
     const reader = new FileReader();
@@ -183,7 +160,7 @@ function enviarArquivo(file) {
   });
 }
 
-/* GALERIA CORRETA */
+/* galeria */
 function carregarGaleria() {
   fetch(`https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents+and+mimeType contains 'image/'&orderBy=createdTime desc&fields=files(id)&key=${API_KEY}`)
     .then(r => r.json())
