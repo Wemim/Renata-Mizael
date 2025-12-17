@@ -19,23 +19,37 @@ body {
   touch-action: manipulation;
 }
 
-/* galeria */
+/* CONTAINER FIXO NO TAMANHO DA IMAGEM */
+.site {
+  width: 1080px;
+  margin: 0 auto;
+}
+
+/* ADAPTA PARA CELULAR SEM CORTAR */
+@media (max-width: 1080px) {
+  .site {
+    width: 100%;
+  }
+}
+
+/* GALERIA */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr); /* 3 por linha */
+  gap: 12px;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .gallery img {
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 20px;
+  border-radius: 14px;
   cursor: pointer;
 }
 
-/* modal */
+/* MODAL */
 .modal {
   position: fixed;
   inset: 0;
@@ -59,7 +73,8 @@ body {
   <source src="musica.mp3" type="audio/mpeg">
 </audio>
 
-<!-- SVG FIXO -->
+<div class="site">
+
 <svg
   viewBox="0 0 1080 3000"
   width="100%"
@@ -104,6 +119,8 @@ body {
 
 </svg>
 
+</div>
+
 <!-- MODAL -->
 <div class="modal" id="modal" onclick="this.style.display='none'">
   <img id="modalImg">
@@ -111,17 +128,16 @@ body {
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzuoFR0uh9fS1pg0jF1ullAp2_UqeNx2ju62QmgCbSJ5EqH-Im47lCCwSij9bqnO26/exec";
-const API_KEY = "AIzaSyC8QVF3RinI2D3JnLarPucU7uFMNLjIwl8";
+const API_KEY = "CAIzaSyC8QVF3RinI2D3JnLarPucU7uFMNLjIwl8";
 const FOLDER_ID = "1Eu6-lW8Pq6eKjLNvwXz_xiOhCpQ0vCFA";
 
 const filesInput = document.getElementById("files");
 
-/* música */
 function startMusic() {
   document.getElementById("musica").play().catch(()=>{});
 }
 
-/* envio automático */
+/* envio */
 filesInput.addEventListener("change", async () => {
   startMusic();
 
@@ -140,7 +156,6 @@ filesInput.addEventListener("change", async () => {
   carregarGaleria();
 });
 
-/* envio FUNCIONAL (igual ao seu) */
 function enviarArquivo(file) {
   return new Promise(resolve => {
     const reader = new FileReader();
