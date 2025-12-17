@@ -37,27 +37,22 @@ svg {
   text-align: center;
   font-size: 22px;
   font-weight: bold;
-  color: #936421;
+  color: #fff;
   padding: 12px;
 }
 
-/* ===== SEÇÃO GALERIA COM IMAGEM ===== */
+/* ===== GALERIA COM IMAGEM (SEM FUNDO PRETO) ===== */
 .galeria-bg {
   width: 100%;
-  height: 1500px;
+  max-width: 1080px;
+  aspect-ratio: 1080 / 1500; /* proporção exata da imagem */
   background: #000 url("galeria.jpg") center top no-repeat;
-  background-size: contain; /* SEM ZOOM */
+  background-size: contain;
   position: relative;
+  margin: 0 auto;
 }
 
-/* ajuste automático para celular */
-@media (max-width: 768px) {
-  .galeria-bg {
-    height: 1200px;
-  }
-}
-
-/* área rolável sobre a imagem */
+/* ===== CONTEÚDO ROLÁVEL PRESO À IMAGEM ===== */
 .galeria-conteudo {
   position: absolute;
   top: 80px;
@@ -68,7 +63,7 @@ svg {
   -webkit-overflow-scrolling: touch;
 }
 
-/* grid */
+/* ===== GRID ===== */
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -116,7 +111,7 @@ svg {
   <image href="topo.jpg" x="0" y="0" width="1080" height="1500"/>
 
   <!-- botão enviar -->
-  <foreignObject x="290" y="1375" width="500" height="90">
+  <foreignObject x="290" y="1320" width="500" height="120">
     <body xmlns="http://www.w3.org/1999/xhtml">
       <label style="
         display:flex;
@@ -124,13 +119,14 @@ svg {
         justify-content:center;
         width:100%;
         height:100%;
-        border-radius:100px;
-        border:3px solid #bd8504;
-        background:#936421;
-        font-size:35px;
+        border-radius:60px;
+        border:2px solid #5f84b8;
+        background:#fff;
+        font-size:26px;
         font-weight:bold;
-        color:#ffffff;
+        color:#5f84b8;
         cursor:pointer;
+        box-sizing:border-box;
       " onclick="startMusic()">
         Enviar fotos (máx. 10)
         <input id="files" type="file" multiple accept="image/*" style="display:none">
@@ -142,7 +138,7 @@ svg {
 <!-- ===== GALERIA DENTRO DA IMAGEM ===== -->
 <div class="galeria-bg">
 
-  <div class="status" id="status">Fotos do casamento</div>
+  <div class="status" id="status">📷 Fotos do casamento</div>
 
   <div class="galeria-conteudo">
     <div class="gallery" id="gallery"></div>
