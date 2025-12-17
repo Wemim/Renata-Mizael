@@ -26,13 +26,11 @@ html, body {
   }
 }
 
-/* ===== TOPO SVG ===== */
 svg {
   display: block;
   width: 100%;
 }
 
-/* ===== STATUS ===== */
 .status {
   text-align: center;
   font-size: 22px;
@@ -41,18 +39,16 @@ svg {
   padding: 12px;
 }
 
-/* ===== GALERIA COM IMAGEM (SEM FUNDO PRETO) ===== */
 .galeria-bg {
   width: 100%;
   max-width: 1080px;
-  aspect-ratio: 1080 / 1500; /* proporção exata da imagem */
+  aspect-ratio: 1080 / 1500;
   background: #000 url("galeria.jpg") center top no-repeat;
   background-size: contain;
   position: relative;
   margin: 0 auto;
 }
 
-/* ===== CONTEÚDO ROLÁVEL PRESO À IMAGEM ===== */
 .galeria-conteudo {
   position: absolute;
   top: 80px;
@@ -63,7 +59,6 @@ svg {
   -webkit-overflow-scrolling: touch;
 }
 
-/* ===== GRID ===== */
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -80,7 +75,7 @@ svg {
   cursor: pointer;
 }
 
-/* ===== MODAL ===== */
+/* ===== MODAIS ===== */
 .modal {
   position: fixed;
   inset: 0;
@@ -106,11 +101,10 @@ svg {
 
 <div class="site">
 
-<!-- ===== TOPO EM SVG ===== -->
+<!-- ===== TOPO ===== -->
 <svg viewBox="0 0 1080 1500" preserveAspectRatio="xMidYMin meet">
   <image href="topo.jpg" x="0" y="0" width="1080" height="1500"/>
 
-  <!-- botão enviar -->
   <foreignObject x="290" y="1370" width="450" height="100">
     <body xmlns="http://www.w3.org/1999/xhtml">
       <label style="
@@ -135,22 +129,63 @@ svg {
   </foreignObject>
 </svg>
 
-<!-- ===== GALERIA DENTRO DA IMAGEM ===== -->
+<!-- ===== GALERIA ===== -->
 <div class="galeria-bg">
-
   <div class="status" id="status">📷 Fotos do casamento</div>
 
   <div class="galeria-conteudo">
     <div class="gallery" id="gallery"></div>
   </div>
-
 </div>
 
 </div>
 
-<!-- ===== MODAL ===== -->
+<!-- ===== MODAL ZOOM ===== -->
 <div class="modal" id="modal" onclick="this.style.display='none'">
   <img id="modalImg">
+</div>
+
+<!-- ===== MODAL CONFIRMAÇÃO ===== -->
+<div class="modal" id="confirmModal">
+  <div style="
+    background:#fff;
+    padding:20px;
+    border-radius:20px;
+    max-width:90%;
+    max-height:80%;
+    overflow:auto;
+    text-align:center;
+  ">
+    <h3 style="margin-top:0;color:#936421">Confirmar envio</h3>
+
+    <div id="preview" style="
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-bottom:20px;
+    "></div>
+
+    <button id="confirmSend" style="
+      padding:12px 25px;
+      border:none;
+      border-radius:30px;
+      background:#936421;
+      color:#fff;
+      font-size:16px;
+      margin-right:10px;
+      cursor:pointer;
+    ">Enviar</button>
+
+    <button id="cancelSend" style="
+      padding:12px 25px;
+      border:2px solid #936421;
+      border-radius:30px;
+      background:#fff;
+      color:#936421;
+      font-size:16px;
+      cursor:pointer;
+    ">Cancelar</button>
+  </div>
 </div>
 
 <script>
@@ -161,33 +196,98 @@ const FOLDER_ID = "1Eu6-lW8Pq6eKjLNvwXz_xiOhCpQ0vCFA";
 const filesInput = document.getElementById("files");
 const statusTxt  = document.getElementById("status");
 
+let arquivosSelecionados = [];
+
 function startMusic() {
   document.getElementById("musica").play().catch(()=>{});
 }
 
-/* upload */
-filesInput.addEventListener("change", async () => {
+/* ===== RENDER PRÉVIA ===== */
+function renderPreview() {
+  const preview = document.getElementById("preview");
+  preview.innerHTML = "";
+
+  arquivosSelecionados.forEach((file, index) => {
+    const box = document.createElement("div");
+    box.style.position = "relative";
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.style.width = "100%";
+    img.style.borderRadius = "10px";
+
+    const remove = document.createElement("span");
+    remove.innerHTML = "✖";
+    remove.style.position = "absolute";
+    remove.style.top = "6px";
+    remove.style.right = "6px";
+    remove.style.width = "24px";
+    remove.style.height = "24px";
+    remove.style.borderRadius = "50%";
+    remove.style.background = "rgba(0,0,0,0.7)";
+    remove.style.color = "#fff";
+    remove.style.display = "flex";
+    remove.style.alignItems = "center";
+    remove.style.justifyContent = "center";
+    remove.style.cursor = "pointer";
+    remove.style.fontSize = "14px";
+
+    remove.onclick = () => {
+      arquivosSelecionados.splice(index, 1);
+      if (arquivosSelecionados.length === 0) {
+        document.getElementById("confirmModal").style.display = "none";
+        filesInput.value = "";
+        return;
+      }
+      renderPreview();
+    };
+
+    box.appendChild(img);
+    box.appendChild(remove);
+    preview.appendChild(box);
+  });
+}
+
+/* ===== SELEÇÃO ===== */
+filesInput.addEventListener("change", () => {
   startMusic();
+  arquivosSelecionados = [...filesInput.files];
 
-  const files = [...filesInput.files];
-  if (files.length === 0) return;
+  if (arquivosSelecionados.length === 0) return;
 
-  if (files.length > 10) {
-    alert("Máximo de 10 fotos por envio.");
+  if (arquivosSelecionados.length > 10) {
+    alert("Máximo de 10 fotos.");
     filesInput.value = "";
     return;
   }
 
-  statusTxt.innerText = `📤 Enviando ${files.length} foto(s)...`;
+  renderPreview();
+  document.getElementById("confirmModal").style.display = "flex";
+});
 
-  for (const file of files) {
+/* ===== CANCELAR ===== */
+document.getElementById("cancelSend").onclick = () => {
+  document.getElementById("confirmModal").style.display = "none";
+  filesInput.value = "";
+  arquivosSelecionados = [];
+};
+
+/* ===== CONFIRMAR ENVIO ===== */
+document.getElementById("confirmSend").onclick = async () => {
+  if (arquivosSelecionados.length === 0) return;
+
+  document.getElementById("confirmModal").style.display = "none";
+  statusTxt.innerText = `📤 Enviando ${arquivosSelecionados.length} foto(s)...`;
+
+  for (const file of arquivosSelecionados) {
     await enviarArquivo(file);
   }
 
   statusTxt.innerText = "✅ Fotos enviadas com sucesso ❤️";
+  arquivosSelecionados = [];
   filesInput.value = "";
   carregarGaleria();
-});
+};
 
 function enviarArquivo(file) {
   return new Promise(resolve => {
@@ -206,7 +306,7 @@ function enviarArquivo(file) {
   });
 }
 
-/* galeria */
+/* ===== GALERIA ===== */
 function carregarGaleria() {
   statusTxt.innerText = "📸 Carregando galeria...";
 
@@ -244,4 +344,3 @@ setInterval(carregarGaleria, 30000);
 
 </body>
 </html>
-
